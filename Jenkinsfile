@@ -1,13 +1,20 @@
 pipeline {
-  agent any
+  agent {
+    label "docker-agent"
+  }
   triggers { 
     pollSCM("*/1 * * * *")
   }
   stages {
+    stage("Build Docker image") {
+      steps {
+       sh "docker build -t calculator ."
+      }
+    }
     stage("Run tests") {
       steps {
-       sh "python3.9 test_calculator.py"
-      }
+       sh "docker run --rm calculator" 
+      } 
     }
   }
 }
